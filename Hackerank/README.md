@@ -7,13 +7,6 @@
 
 ## Basic Select 
 
-### 1. []()
-
-```sql 
-
-```
-
-
 ### 1. [Revising the Select Query I](https://www.hackerrank.com/challenges/revising-the-select-query/problem?isFullScreen=false)
 
 ```sql 
