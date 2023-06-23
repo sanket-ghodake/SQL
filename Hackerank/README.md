@@ -5,7 +5,7 @@
 
 [HackerRank-SQL](https://www.hackerrank.com/domains/sql) my submissions. My account - [sanketghodke03](https://www.hackerrank.com/sanketghodke03)
 
-## SQL (Basic)
+
 
 ### 1. [Revising the Select Query I](https://www.hackerrank.com/challenges/revising-the-select-query/problem?isFullScreen=false)
 
