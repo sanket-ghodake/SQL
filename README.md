@@ -5,3 +5,5 @@
 > [SQL | Conversion Function | Implicit and Explicit conversions in SQL](https://www.geeksforgeeks.org/sql-conversion-function/)
 > 
 > [When   should I use semicolons in SQL Server?](https://stackoverflow.com/questions/710683/when-should-i-use-semicolons-in-sql-server)
+>
+> MySQL has no square function. Use power(a,b).
