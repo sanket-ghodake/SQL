@@ -264,47 +264,100 @@ order by lat_n asc limit 1;
 ### 35. [Population Census](https://www.hackerrank.com/challenges/asian-population/problem?isFullScreen=true)
 
 ```sql 
-
+select sum(city.population)
+from city 
+inner join country
+on city.countrycode = country.code
+where continent = 'asia';
 ```
 
 ### 36. [African Cities](https://www.hackerrank.com/challenges/african-cities/problem?isFullScreen=true)
 
 ```sql 
-
+select city.name
+from city
+inner join country
+on city.countrycode = country.code
+where continent ='africa';
 ```
 
 ### 37. [Average Population of Each Continent](https://www.hackerrank.com/challenges/average-population-of-each-continent/problem?isFullScreen=true)
 
 ```sql 
+--rounded down to nearest integer - floor function
 
+select continent, floor(avg(city.population))
+from country
+inner join city
+on country.code = city.countrycode
+group by continent;
 ```
 
-### 1. []()
+### 38. [Weather Observation Station 18](https://www.hackerrank.com/challenges/weather-observation-station-18/problem?isFullScreen=true)
 
 ```sql 
-
+select round(abs((max(lat_n)-min(lat_n))+abs(max(long_w)-min(long_w))),4) 
+from station;
 ```
 
-### 1. []()
+### 39. [Weather Observation Station 19](https://www.hackerrank.com/challenges/weather-observation-station-19/problem?isFullScreen=true)
 
 ```sql 
+METHOD 1:
+select round(
+    sqrt(
+        (
+            (max(lat_n)-min(lat_n))
+            *
+            (max(lat_n)-min(lat_n))
+        )
+        +(
+            (max(long_w)-min(long_w))
+            *
+            (max(long_w)-min(long_w))
+        )
+    )
+    ,4
+) 
+from station;
 
+METHOD 2:
+select round(
+    sqrt(
+        power(
+            (max(lat_n)-min(lat_n)),2
+        )
+        +power(
+            (max(long_w)-min(long_w)),2
+        )
+    )
+    ,4
+) 
+from station;
 ```
 
-### 1. []()
+### 40. [The PADS](https://www.hackerrank.com/challenges/the-pads/problem?isFullScreen=true)
 
 ```sql 
+select concat(name,'(',left(occupation,1),')')
+from occupations
+order by name asc;
 
+select concat('There are a total of ',count(*),' ',lower(occupation),'s.')
+from occupations 
+group by occupation
+order by count(*),occupation;
 ```
 
-### 1. []()
+### 41. [Type of Triangle](https://www.hackerrank.com/challenges/what-type-of-triangle/problem?isFullScreen=true)
 
 ```sql 
-
-```
-
-### 1. []()
-
-```sql 
-
+select 
+    case 
+        when A=B and A=C then 'Equilateral'
+        when (A=B and (A+B)>C) or (B=C and (C+B)>A) or (A=C and (A+C)>B) then 'Isosceles'
+        when (A+B)>C and (A+C)>B and (C+B)>A then 'Scalene'
+        else 'Not A Triangle'
+    end as output
+from triangles;
 ```
