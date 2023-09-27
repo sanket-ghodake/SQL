@@ -361,3 +361,19 @@ select
     end as output
 from triangles;
 ```
+
+### 42. [The Report](https://www.hackerrank.com/challenges/the-report/problem?isFullScreen=true)
+
+```sql
+-- 1
+select if(g.grade<8,NULL,s.Name), g.grade,s.marks 
+from Students s, Grades g
+where s.Marks between g.Min_Mark and g.Max_Mark
+order by g.grade desc, if(g.grade<8,s.Marks ,s.Name) asc;
+
+-- 2
+select if(g.grade<8,NULL,s.Name), g.grade,s.marks 
+from Students s, Grades g
+where s.Marks between g.Min_Mark and g.Max_Mark
+order by g.grade desc, case when g.grade<8 then s.Marks else s.Name end;
+```
