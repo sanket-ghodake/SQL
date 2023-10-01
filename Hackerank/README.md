@@ -378,7 +378,7 @@ where s.Marks between g.Min_Mark and g.Max_Mark
 order by g.grade desc, case when g.grade<8 then s.Marks else s.Name end;
 ```
 
-#### 43. [Challenges](https://www.hackerrank.com/challenges/challenges/problem)
+### 43. [Challenges](https://www.hackerrank.com/challenges/challenges/problem)
 
 ```sql
 -- My
@@ -439,7 +439,7 @@ order by c_count DESC, c.hacker_id
 
 ```
 
-#### 44. [Contest Leaderboard](https://www.hackerrank.com/challenges/contest-leaderboard/problem)
+### 44. [Contest Leaderboard](https://www.hackerrank.com/challenges/contest-leaderboard/problem)
 
 see 43 before 
 
