@@ -438,3 +438,22 @@ order by c_count DESC, c.hacker_id
 ;
 
 ```
+
+#### 44. [Contest Leaderboard](https://www.hackerrank.com/challenges/contest-leaderboard/problem)
+
+see 43 before 
+
+```sql
+
+select s.hacker_id ,h.name, sum(mrk) marks
+from Hackers h
+inner join 
+    (select hacker_id, challenge_id, max(score) as mrk
+    from Submissions 
+    group by hacker_id,challenge_id) as s
+on h.hacker_id = s.hacker_id
+group by s.hacker_id, h.name
+having marks>0
+order by marks desc, h.hacker_id
+;
+```
