@@ -1,0 +1,598 @@
+------------------------------------------------------------------------
+-- Create exam_db 
+
+mysql> create database exam_db;
+Query OK, 1 row affected (0.28 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| Assignment1        |
+| HR                 |
+| exam_db            |
+| information_schema |
+| joins              |
+| mysql              |
+| northwind          |
+| performance_schema |
+| sales              |
+| spj                |
+| sys                |
+| testdb             |
++--------------------+
+12 rows in set (0.00 sec)
+
+mysql> use exam_db;
+Database changed
+------------------------------------------------------------------------
+-- Manager
+
+mysql> create table Manager(
+    -> MANID CHAR PRIMARY KEY,
+    -> FNAME VARCHAR(20),
+    -> LNAME VARCHAR(20) NOT NULL,
+    -> GENDER CHAR(10),
+    -> DOB date,
+    -> SALARY INT CHECK(SALARY>0)
+    -> )
+    -> ;
+Query OK, 0 rows affected (1.18 sec)
+
+mysql> desc Manager;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| MANID  | char(1)     | NO   | PRI | NULL    |       |
+| FNAME  | varchar(20) | YES  |     | NULL    |       |
+| LNAME  | varchar(20) | NO   |     | NULL    |       |
+| GENDER | char(10)    | YES  |     | NULL    |       |
+| DOB    | date        | YES  |     | NULL    |       |
+| SALARY | int         | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+
+
+mysql> insert into Manager
+    -> values 
+    -> ('M/01','Steven', 'Washokera', 'male', '1991-06-16', 5300000),
+    -> ('M/02','Cecilia', 'Mzole', 'female', '1992-06-16', 4300000),
+    -> ('M/03','Yassin', 'Mpare', 'male', '1998-06-16', 3300000),
+    -> ('M/04','Glady', 'Mtimbuka', 'female', '1991-09-19', 4100000),
+    -> ('M/05','James', 'Kanyala', 'male', '1993-01-11', 3500000)
+    -> ;
+Query OK, 5 rows affected (0.11 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from Manager;
++-------+---------+-----------+--------+------------+---------+
+| MANID | FNAME   | LNAME     | GENDER | DOB        | SALARY  |
++-------+---------+-----------+--------+------------+---------+
+| M/01  | Steven  | Washokera | male   | 1991-06-16 | 5300000 |
+| M/02  | Cecilia | Mzole     | female | 1992-06-16 | 4300000 |
+| M/03  | Yassin  | Mpare     | male   | 1998-06-16 | 3300000 |
+| M/04  | Glady   | Mtimbuka  | female | 1991-09-19 | 4100000 |
+| M/05  | James   | Kanyala   | male   | 1993-01-11 | 3500000 |
++-------+---------+-----------+--------+------------+---------+
+5 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+-- Department
+mysql> create table Department(
+    -> DEPTNO CHAR(5) PRIMARY KEY,
+    -> DEPT_NAME VARCHAR(20) NOT NULL,
+    -> MANID CHAR(5),
+    -> LOCATION VARCHAR(20),
+    -> FOREIGN KEY dept_of_manager(MANID) REFERENCES Manager(MANID)
+    -> ON DELETE SET NULL
+    -> );
+Query OK, 0 rows affected (1.02 sec)
+
+mysql> desc Department;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| DEPTNO    | char(5)     | NO   | PRI | NULL    |       |
+| DEPT_NAME | varchar(20) | NO   |     | NULL    |       |
+| MANID     | char(5)     | YES  | MUL | NULL    |       |
+| LOCATION  | varchar(20) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> insert into Department
+    -> values
+    -> ('D/01','Consumable', 'M/01', 'Posta'),
+    -> ('D/02','Cleaning Material', 'M/02', 'Posta'),
+    -> ('D/03','Food Court', 'M/03', 'Kariakoo'),
+    -> ('D/04','Stationary', 'M/04', 'Mnazi Mmoja'),
+    -> ('D/05','Beverage', 'M/05', 'Mnazi Mmoja');
+Query OK, 5 rows affected (0.14 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from Department;
++--------+-------------------+-------+-------------+
+| DEPTNO | DEPT_NAME         | MANID | LOCATION    |
++--------+-------------------+-------+-------------+
+| D/01   | Consumable        | M/01  | Posta       |
+| D/02   | Cleaning Material | M/02  | Posta       |
+| D/03   | Food Court        | M/03  | Kariakoo    |
+| D/04   | Stationary        | M/04  | Mnazi Mmoja |
+| D/05   | Beverage          | M/05  | Mnazi Mmoja |
++--------+-------------------+-------+-------------+
+5 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+-- Supplier
+
+mysql> create table Supplier(
+    -> DEPTNO CHAR(5) ,
+    -> SUPID CHAR(5) PRIMARY KEY,
+    -> FNAME VARCHAR(20),
+    -> LNAME VARCHAR(20),
+    -> GENDER enum('male','female'),
+    -> SALARY INT CHECK (Salary>0) ,
+    -> COMMISSION INT,
+    -> FOREIGN KEY supplier_dept(DEPTNO) REFERENCES Department(DEPTNO)
+    -> ON DELETE SET NULL
+    -> );
+Query OK, 0 rows affected (1.40 sec)
+
+mysql> desc Supplier;
++------------+-----------------------+------+-----+---------+-------+
+| Field      | Type                  | Null | Key | Default | Extra |
++------------+-----------------------+------+-----+---------+-------+
+| DEPTNO     | char(5)               | YES  | MUL | NULL    |       |
+| SUPID      | char(5)               | NO   | PRI | NULL    |       |
+| FNAME      | varchar(20)           | YES  |     | NULL    |       |
+| LNAME      | varchar(20)           | YES  |     | NULL    |       |
+| GENDER     | enum('male','female') | YES  |     | NULL    |       |
+| SALARY     | int                   | YES  |     | NULL    |       |
+| COMMISSION | int                   | YES  |     | NULL    |       |
++------------+-----------------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> 
+
+mysql> insert into Supplier
+    -> values
+    -> ('D/01', 'S/01','David', 'Joseph', 'male', 700000, 23000),
+    -> ('D/02', 'S/02','Bruce', 'Wills', 'male', 550000, 43000),
+    -> ('D/03', 'S/03','Michael', 'David', 'male', 527000, NULL),
+    -> ('D/04', 'S/04','Kelvin', 'Halt', 'male', 650000, 43000),
+    -> ('D/05', 'S/05','Sweetlove', 'Steven', 'female', 700000, 53000)
+    -> ;
+Query OK, 5 rows affected (0.13 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from Supplier;
++--------+-------+-----------+--------+--------+--------+------------+
+| DEPTNO | SUPID | FNAME     | LNAME  | GENDER | SALARY | COMMISSION |
++--------+-------+-----------+--------+--------+--------+------------+
+| D/01   | S/01  | David     | Joseph | male   | 700000 |      23000 |
+| D/02   | S/02  | Bruce     | Wills  | male   | 550000 |      43000 |
+| D/03   | S/03  | Michael   | David  | male   | 527000 |       NULL |
+| D/04   | S/04  | Kelvin    | Halt   | male   | 650000 |      43000 |
+| D/05   | S/05  | Sweetlove | Steven | female | 700000 |      53000 |
++--------+-------+-----------+--------+--------+--------+------------+
+5 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+-- Customer
+
+mysql> create table Customer(
+    -> CUSTOMERID  INT AUTO_INCREMENT PRIMARY KEY,
+    -> FNAME VARCHAR(20),
+    -> LNAME VARCHAR(20),
+    -> COMPANY VARCHAR(20)
+    -> );
+Query OK, 0 rows affected (1.13 sec)
+
+mysql> desc Customer;
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| CUSTOMERID | int         | NO   | PRI | NULL    | auto_increment |
+| FNAME      | varchar(20) | YES  |     | NULL    |                |
+| LNAME      | varchar(20) | YES  |     | NULL    |                |
+| COMPANY    | varchar(20) | YES  |     | NULL    |                |
++------------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> 
+
+mysql> insert into Customer(fname,lname,company)
+    -> values
+    -> ('Jacob', 'Denis', 'Bongosatcom'),
+    -> ('Lameck', 'Goffrey', 'Bongosatcom'),
+    -> ('Frank', 'Desdery', 'IPPmedia'),
+    -> ('John', 'Justin', 'Airtel'),
+    -> ('Vicent', 'Victor', 'Bayport Financila');
+Query OK, 5 rows affected (0.13 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from Customer;
++------------+--------+---------+-------------------+
+| CUSTOMERID | FNAME  | LNAME   | COMPANY           |
++------------+--------+---------+-------------------+
+|          1 | Jacob  | Denis   | Bongosatcom       |
+|          2 | Lameck | Goffrey | Bongosatcom       |
+|          3 | Frank  | Desdery | IPPmedia          |
+|          4 | John   | Justin  | Airtel            |
+|          5 | Vicent | Victor  | Bayport Financila |
++------------+--------+---------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+
+------------------------------------------------------------------------
+-- Product
+
+mysql> create table Product(
+    -> PCODE INT PRIMARY KEY,
+    -> DEPTNO CHAR(5),
+    -> SUPID CHAR(5),
+    -> CUSTOMERID INT,
+    -> PRODUCT_NAME VARCHAR(20) NOT NULL,
+    -> PRICE INT CHECK(PRICE>0),
+    -> ITEM INT(3),
+    -> SALESDATE date,
+    -> FOREIGN KEY product_dept(DEPTNO) REFERENCES Department(DEPTNO)
+    -> ON DELETE SET NULL,
+    -> FOREIGN KEY product_supplier(SUPID) REFERENCES Supplier(SUPID)
+    -> ON DELETE SET NULL,
+    -> FOREIGN KEY product_customer(CUSTOMERID) REFERENCES Customer(CUSTOMERID)
+    -> ON DELETE SET NULL
+    -> );
+Query OK, 0 rows affected, 1 warning (1.56 sec)
+
+mysql> desc Product;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| PCODE        | int         | NO   | PRI | NULL    |       |
+| DEPTNO       | char(5)     | YES  | MUL | NULL    |       |
+| SUPID        | char(5)     | YES  | MUL | NULL    |       |
+| CUSTOMERID   | int         | YES  | MUL | NULL    |       |
+| PRODUCT_NAME | varchar(20) | NO   |     | NULL    |       |
+| PRICE        | int         | YES  |     | NULL    |       |
+| ITEM         | int         | YES  |     | NULL    |       |
+| SALESDATE    | date        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> insert into Product
+    -> values
+    -> (101, 'D/01', 'S/01', 1,  'Computer', 500000, 5, '2014/03/06'),
+    -> (102, 'D/01', 'S/01', 1,  'Laptop', 900000, 15, '2014/03/06'),
+    -> (103, 'D/02', 'S/02', 2,  'Toilet Paper',800, 450, '2014/03/06'),
+    -> (104, 'D/03', 'S/03', 3,  'Stake Meat', 15000, 150, '2014/03/06'),
+    -> (105, 'D/04', 'S/03', 4,  'Poutly Meat', 20000, 200, '2014/03/06')
+    -> ;
+Query OK, 5 rows affected, 5 warnings (0.15 sec)
+Records: 5  Duplicates: 0  Warnings: 5
+
+mysql> select * from Product;
++-------+--------+-------+------------+--------------+--------+------+------------+
+| PCODE | DEPTNO | SUPID | CUSTOMERID | PRODUCT_NAME | PRICE  | ITEM | SALESDATE  |
++-------+--------+-------+------------+--------------+--------+------+------------+
+|   101 | D/01   | S/01  |          1 | Computer     | 500000 |    5 | 2014-03-06 |
+|   102 | D/01   | S/01  |          1 | Laptop       | 900000 |   15 | 2014-03-06 |
+|   103 | D/02   | S/02  |          2 | Toilet Paper |    800 |  450 | 2014-03-06 |
+|   104 | D/03   | S/03  |          3 | Stake Meat   |  15000 |  150 | 2014-03-06 |
+|   105 | D/04   | S/03  |          4 | Poutly Meat  |  20000 |  200 | 2014-03-06 |
++-------+--------+-------+------------+--------------+--------+------+------------+
+5 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.1 Display details of the suppliers where commission percentage is null and salary in the range 500000 to 650000 and gender is male.
+
+mysql> select * 
+    -> from Supplier 
+    -> where COMMISSION is null and (salary between 500000 and 650000) and gender = 'male'
+    -> ; 
++--------+-------+---------+-------+--------+--------+------------+
+| DEPTNO | SUPID | FNAME   | LNAME | GENDER | SALARY | COMMISSION |
++--------+-------+---------+-------+--------+--------+------------+
+| D/03   | S/03  | Michael | David | male   | 527000 |       NULL |
++--------+-------+---------+-------+--------+--------+------------+
+1 row in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.2 Write a query to print customers full name(concating FNAME and LNAME column) in lowercase format. (e.g 'jacob denis')
+
+mysql> select lower(concat(fname,' ', lname)) from Customer;
++---------------------------------+
+| lower(concat(fname,' ', lname)) |
++---------------------------------+
+| jacob denis                     |
+| lameck goffrey                  |
+| frank desdery                   |
+| john justin                     |
+| vicent victor                   |
++---------------------------------+
+5 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.3 Display suppliers where the first name or last name contain 3rd letter 'v'.
+
+mysql> select * 
+    -> from Supplier 
+    -> where fname like '__v%' or lname like '__v%'
+    -> ;
++--------+-------+---------+--------+--------+--------+------------+
+| DEPTNO | SUPID | FNAME   | LNAME  | GENDER | SALARY | COMMISSION |
++--------+-------+---------+--------+--------+--------+------------+
+| D/01   | S/01  | David   | Joseph | male   | 700000 |      23000 |
+| D/03   | S/03  | Michael | David  | male   | 527000 |       NULL |
++--------+-------+---------+--------+--------+--------+------------+
+2 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.4 Write a query that gives manager firstname, customers firstname,product name and supplier firstname for each product along with the product code.(use join)
+
+mysql> select m.fname,c.fname,p.PRODUCT_NAME,s.fname, p.pcode
+    -> from Product p
+    -> inner join (select fname,deptno from Department inner join Manager using(MANID)) as m
+    -> on m.DEPTNO = p.DEPTNO
+    -> inner join Customer c
+    -> on c.CUSTOMERID = p.CUSTOMERID
+    -> inner join Supplier s
+    -> on s.SUPID = p.SUPID
+    -> ;
++---------+--------+--------------+---------+-------+
+| fname   | fname  | PRODUCT_NAME | fname   | pcode |
++---------+--------+--------------+---------+-------+
+| Steven  | Jacob  | Computer     | David   |   101 |
+| Steven  | Jacob  | Laptop       | David   |   102 |
+| Cecilia | Lameck | Toilet Paper | Bruce   |   103 |
+| Yassin  | Frank  | Stake Meat   | Michael |   104 |
+| Glady   | John   | Poutly Meat  | Michael |   105 |
++---------+--------+--------------+---------+-------+
+5 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.5 Display departments manager details. considering only those departments which supplier has commission.(use sub-query)(3 Marks)
+
+mysql> select m.MANID ,m.FNAME ,m.LNAME, m.GENDER, m.DOB ,m.SALARY
+    -> from Manager m
+    -> inner join Department d
+    -> using (MANID)
+    -> where
+    -> d.deptno in (select s.deptno from Supplier s where s.COMMISSION is not null )
+    -> ;
++-------+---------+-----------+--------+------------+---------+
+| MANID | FNAME   | LNAME     | GENDER | DOB        | SALARY  |
++-------+---------+-----------+--------+------------+---------+
+| M/01  | Steven  | Washokera | male   | 1991-06-16 | 5300000 |
+| M/02  | Cecilia | Mzole     | female | 1992-06-16 | 4300000 |
+| M/04  | Glady   | Mtimbuka  | female | 1991-09-19 | 4100000 |
+| M/05  | James   | Kanyala   | male   | 1993-01-11 | 3500000 |
++-------+---------+-----------+--------+------------+---------+
+4 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.6 Display age of managers in years( integer value).
+
+mysql> select year(curdate())-year(DOB) age_in_years from Manager;
++--------------+
+| age_in_years |
++--------------+
+|           32 |
+|           31 |
+|           25 |
+|           32 |
+|           30 |
++--------------+
+5 rows in set (0.01 sec)
+
+------------------------------------------------------------------------
+Q.7 Display all department name and its product item count.(use join)(3 Marks)
+
+mysql> select d.DEPT_NAME, sum(p.ITEM) item_count
+    -> from Department d
+    -> inner join Product p
+    -> using(DEPTNO)
+    -> group by d.dept_name
+    -> ;
++-------------------+------------+
+| DEPT_NAME         | item_count |
++-------------------+------------+
+| Consumable        |         20 |
+| Cleaning Material |        450 |
+| Food Court        |        150 |
+| Stationary        |        200 |
++-------------------+------------+
+4 rows in set (0.01 sec)
+
+------------------------------------------------------------------------
+Q.8 find suppliers with second highest salary.(3 Marks)
+
+mysql> select * from Supplier s
+    -> where s.Salary = (select distinct s1.salary from Supplier s1 
+    -> order by s1.SALARY desc
+    -> limit 1,1
+    -> )
+    -> ;
++--------+-------+--------+-------+--------+--------+------------+
+| DEPTNO | SUPID | FNAME  | LNAME | GENDER | SALARY | COMMISSION |
++--------+-------+--------+-------+--------+--------+------------+
+| D/04   | S/04  | Kelvin | Halt  | male   | 650000 |      43000 |
++--------+-------+--------+-------+--------+--------+------------+
+1 row in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.9 Find all customers which doesn't have any product.(use sub-query)
+
+mysql> select * 
+    -> from Customer
+    -> where CUSTOMERID not in (select CUSTOMERID from Product)
+    -> ;
++------------+--------+--------+-------------------+
+| CUSTOMERID | FNAME  | LNAME  | COMPANY           |
++------------+--------+--------+-------------------+
+|          5 | Vicent | Victor | Bayport Financila |
++------------+--------+--------+-------------------+
+1 row in set (0.00 sec)
+
+------------------------------------------------------------------------
+Q.10 Change the data type of manager salary column to decimal.
+
+     ALTER TABLE manager MODIFY salary DECIMAL(7,2);
+     
+mysql> ALTER TABLE Manager MODIFY salary DECIMAL(7,2);
+ERROR 1264 (22003): Out of range value for column 'salary' at row 1
+
+mysql> ALTER TABLE Manager MODIFY salary DECIMAL(9,2);
+Query OK, 5 rows affected (2.56 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> desc Manager;
++--------+--------------+------+-----+---------+-------+
+| Field  | Type         | Null | Key | Default | Extra |
++--------+--------------+------+-----+---------+-------+
+| MANID  | char(5)      | NO   | PRI | NULL    |       |
+| FNAME  | varchar(20)  | YES  |     | NULL    |       |
+| LNAME  | varchar(20)  | NO   |     | NULL    |       |
+| GENDER | char(10)     | YES  |     | NULL    |       |
+| DOB    | date         | YES  |     | NULL    |       |
+| salary | decimal(9,2) | YES  |     | NULL    |       |
++--------+--------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+
+mysql> select * from Manager;
++-------+---------+-----------+--------+------------+------------+
+| MANID | FNAME   | LNAME     | GENDER | DOB        | salary     |
++-------+---------+-----------+--------+------------+------------+
+| M/01  | Steven  | Washokera | male   | 1991-06-16 | 5300000.00 |
+| M/02  | Cecilia | Mzole     | female | 1992-06-16 | 4300000.00 |
+| M/03  | Yassin  | Mpare     | male   | 1998-06-16 | 3300000.00 |
+| M/04  | Glady   | Mtimbuka  | female | 1991-09-19 | 4100000.00 |
+| M/05  | James   | Kanyala   | male   | 1993-01-11 | 3500000.00 |
++-------+---------+-----------+--------+------------+------------+
+5 rows in set (0.00 sec)
+
+------------------------------------------------------------------------
+-- Procedure 
+
+2. Write a PL/SQL stored procedure titled as 'COMPOUND_INTR' to calculate the amount of interest on a bank account, which compounds interest yearly. Condition is given as A stored procedure should accept the values of 'p', 'r' and 'y' as parameters and insert the Interest and total amount into temp table. (I = p(1 + r / 100)y) and insert it into the temporary table having column result.
+
+mysql> create table temp(
+    -> Interest float(9,2),
+    -> totalAmount float(9,2)
+    -> );
+Query OK, 0 rows affected, 2 warnings (1.61 sec)
+
+mysql> desc temp;
++-------------+------------+------+-----+---------+-------+
+| Field       | Type       | Null | Key | Default | Extra |
++-------------+------------+------+-----+---------+-------+
+| Interest    | float(9,2) | YES  |     | NULL    |       |
+| totalAmount | float(9,2) | YES  |     | NULL    |       |
++-------------+------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure COMPOUND_INTR(p int, r int, y int)
+    -> begin
+    -> declare i float(9,2);
+    -> declare total float(9,2);
+    -> set total = p;
+    -> set i = p*(1 +(r/100))*y;
+    -> set total = total+i;
+    -> select i,total;
+    -> insert into temp values (i,total);
+    -> end//
+Query OK, 0 rows affected, 2 warnings (0.17 sec)
+
+mysql> delimiter ;
+mysql>  
+mysql> call COMPOUND_INTR(100,5,2);
+
++----------+-------------+
+| Interest | totalAmount |
++----------+-------------+
+| 210.00   |      310.00 |
++----------+-------------+
+1 row in set (0.00 sec)
+
+Query OK, 1 row affected (0.10 sec)
+
+------------------------------------------------------------------------
+-- All tables structure and data
+
+mysql> show tables;
++-------------------+
+| Tables_in_exam_db |
++-------------------+
+| Customer          |
+| Department        |
+| Manager           |
+| Product           |
+| Supplier          |
++-------------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Customer;
++------------+--------+---------+-------------------+
+| CUSTOMERID | FNAME  | LNAME   | COMPANY           |
++------------+--------+---------+-------------------+
+|          1 | Jacob  | Denis   | Bongosatcom       |
+|          2 | Lameck | Goffrey | Bongosatcom       |
+|          3 | Frank  | Desdery | IPPmedia          |
+|          4 | John   | Justin  | Airtel            |
+|          5 | Vicent | Victor  | Bayport Financila |
++------------+--------+---------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Department;
++--------+-------------------+-------+-------------+
+| DEPTNO | DEPT_NAME         | MANID | LOCATION    |
++--------+-------------------+-------+-------------+
+| D/01   | Consumable        | M/01  | Posta       |
+| D/02   | Cleaning Material | M/02  | Posta       |
+| D/03   | Food Court        | M/03  | Kariakoo    |
+| D/04   | Stationary        | M/04  | Mnazi Mmoja |
+| D/05   | Beverage          | M/05  | Mnazi Mmoja |
++--------+-------------------+-------+-------------+
+5 rows in set (0.01 sec)
+
+
+
+mysql> select * from Manager;
++-------+---------+-----------+--------+------------+---------+
+| MANID | FNAME   | LNAME     | GENDER | DOB        | SALARY  |
++-------+---------+-----------+--------+------------+---------+
+| M/01  | Steven  | Washokera | male   | 1991-06-16 | 5300000 |
+| M/02  | Cecilia | Mzole     | female | 1992-06-16 | 4300000 |
+| M/03  | Yassin  | Mpare     | male   | 1998-06-16 | 3300000 |
+| M/04  | Glady   | Mtimbuka  | female | 1991-09-19 | 4100000 |
+| M/05  | James   | Kanyala   | male   | 1993-01-11 | 3500000 |
++-------+---------+-----------+--------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Product;
++-------+--------+-------+------------+--------------+--------+------+------------+
+| PCODE | DEPTNO | SUPID | CUSTOMERID | PRODUCT_NAME | PRICE  | ITEM | SALESDATE  |
++-------+--------+-------+------------+--------------+--------+------+------------+
+|   101 | D/01   | S/01  |          1 | Computer     | 500000 |    5 | 2014-03-06 |
+|   102 | D/01   | S/01  |          1 | Laptop       | 900000 |   15 | 2014-03-06 |
+|   103 | D/02   | S/02  |          2 | Toilet Paper |    800 |  450 | 2014-03-06 |
+|   104 | D/03   | S/03  |          3 | Stake Meat   |  15000 |  150 | 2014-03-06 |
+|   105 | D/04   | S/03  |          4 | Poutly Meat  |  20000 |  200 | 2014-03-06 |
++-------+--------+-------+------------+--------------+--------+------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from Supplier;
++--------+-------+-----------+--------+--------+--------+------------+
+| DEPTNO | SUPID | FNAME     | LNAME  | GENDER | SALARY | COMMISSION |
++--------+-------+-----------+--------+--------+--------+------------+
+| D/01   | S/01  | David     | Joseph | male   | 700000 |      23000 |
+| D/02   | S/02  | Bruce     | Wills  | male   | 550000 |      43000 |
+| D/03   | S/03  | Michael   | David  | male   | 527000 |       NULL |
+| D/04   | S/04  | Kelvin    | Halt   | male   | 650000 |      43000 |
+| D/05   | S/05  | Sweetlove | Steven | female | 700000 |      53000 |
++--------+-------+-----------+--------+--------+--------+------------+
+5 rows in set (0.00 sec)
+
+
+
